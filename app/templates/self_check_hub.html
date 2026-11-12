@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Self-Check Hub — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}Wellbeing Self-Check Hub{% endblock %}
+
+{% block content %}
+<div class="card" style="background: linear-gradient(135deg, var(--surface), var(--primary-subtle)); border-color: var(--primary-border);">
+  <span class="badge badge-validated" style="margin-bottom: 8px;">Evidence-Based Screeners</span>
+  <h1 style="font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px;">
+    Mental Wellbeing Self-Check Categories
+  </h1>
+  <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 0;">
+    Select an assessment category to explore your symptoms, habits, and pressures over the past two weeks.
+    Validated clinical instruments (PHQ-9, GAD-7) are presented with their standardized scoring,
+    alongside dedicated non-diagnostic student wellbeing checks.
+  </p>
+</div>
+
+<div class="grid-2">
+  <!-- 1. Mood & Emotional Wellbeing (PHQ-9) -->
+  <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 10px;">
+        <span class="badge badge-validated">Validated Clinical Screener</span>
+        <span class="mut" style="font-size: 12px;">9 Questions &middot; ~3 mins</span>
+      </div>
+      <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Mood & Depression Symptoms (PHQ-9)</h2>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 14px;">
+        Standard Patient Health Questionnaire-9 measuring frequency of low mood, sleep changes, fatigue, and interest loss.
+      </p>
+    </div>
+    <div>
+      {% if previous_scores.get('phq9') %}
+      <div style="background: var(--surface-2); padding: 8px 12px; border-radius: var(--radius-md); font-size: 12px; margin-bottom: 12px;">
+        Last result: <b>{{ previous_scores['phq9'].total }}/27 ({{ previous_scores['phq9'].band }})</b> &middot; {{ previous_scores['phq9'].created_at[:10] }}
+      </div>
+      {% endif %}
+      <a href="/self-check/phq9" class="btn btn-primary" style="width: 100%;">Begin PHQ-9 Screener →</a>
+    </div>
+  </div>
+
+  <!-- 2. Stress & Anxiety (GAD-7) -->
+  <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 10px;">
+        <span class="badge badge-validated">Validated Clinical Screener</span>
+        <span class="mut" style="font-size: 12px;">7 Questions &middot; ~2 mins</span>
+      </div>
+      <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Stress & Anxiety (GAD-7)</h2>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 14px;">
+        Standard Generalized Anxiety Disorder-7 measuring worry control, tension, restlessness, and nervousness.
+      </p>
+    </div>
+    <div>
+      {% if previous_scores.get('gad7') %}
+      <div style="background: var(--surface-2); padding: 8px 12px; border-radius: var(--radius-md); font-size: 12px; margin-bottom: 12px;">
+        Last result: <b>{{ previous_scores['gad7'].total }}/21 ({{ previous_scores['gad7'].band }})</b> &middot; {{ previous_scores['gad7'].created_at[:10] }}
+      </div>
+      {% endif %}
+      <a href="/self-check/gad7" class="btn btn-primary" style="width: 100%;">Begin GAD-7 Screener →</a>
+    </div>
+  </div>
+
+  <!-- 3. Sleep & Lifestyle Screener -->
+  <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 10px;">
+        <span class="badge badge-low">Student Screener</span>
+        <span class="mut" style="font-size: 12px;">5 Questions &middot; ~2 mins</span>
+      </div>
+      <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Sleep & Lifestyle Habits</h2>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 14px;">
+        Evaluates screen time before bed, bedtime consistency, nighttime awakenings, caffeine, and daytime fatigue.
+      </p>
+    </div>
+    <div>
+      {% if previous_scores.get('sleep') %}
+      <div style="background: var(--surface-2); padding: 8px 12px; border-radius: var(--radius-md); font-size: 12px; margin-bottom: 12px;">
+        Last result: <b>{{ previous_scores['sleep'].total }}/15 ({{ previous_scores['sleep'].band }})</b> &middot; {{ previous_scores['sleep'].created_at[:10] }}
+      </div>
+      {% endif %}
+      <a href="/self-check/sleep" class="btn btn-secondary" style="width: 100%;">Check Sleep & Lifestyle →</a>
+    </div>
+  </div>
+
+  <!-- 4. Academic & Social Pressure -->
+  <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 10px;">
+        <span class="badge badge-moderate">Student Screener</span>
+        <span class="mut" style="font-size: 12px;">5 Questions &middot; ~2 mins</span>
+      </div>
+      <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Academic & Social Pressure</h2>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 14px;">
+        Assesses course overwhelm, fear of failure, family expectations, impostor syndrome, and break guilt.
+      </p>
+    </div>
+    <div>
+      {% if previous_scores.get('academic') %}
+      <div style="background: var(--surface-2); padding: 8px 12px; border-radius: var(--radius-md); font-size: 12px; margin-bottom: 12px;">
+        Last result: <b>{{ previous_scores['academic'].total }}/15 ({{ previous_scores['academic'].band }})</b> &middot; {{ previous_scores['academic'].created_at[:10] }}
+      </div>
+      {% endif %}
+      <a href="/self-check/academic" class="btn btn-secondary" style="width: 100%;">Check Academic Pressure →</a>
+    </div>
+  </div>
+
+  <!-- 5. Motivation & Daily Activities -->
+  <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; grid-column: span 2;">
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 10px;">
+        <span class="badge badge-low">Student Screener</span>
+        <span class="mut" style="font-size: 12px;">5 Questions &middot; ~2 mins</span>
+      </div>
+      <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Motivation & Daily Momentum</h2>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 14px;">
+        Screening for procrastination friction, brain fog, routine breakdown, task paralysis, and loss of momentum.
+      </p>
+    </div>
+    <div>
+      {% if previous_scores.get('motivation') %}
+      <div style="background: var(--surface-2); padding: 8px 12px; border-radius: var(--radius-md); font-size: 12px; margin-bottom: 12px;">
+        Last result: <b>{{ previous_scores['motivation'].total }}/15 ({{ previous_scores['motivation'].band }})</b> &middot; {{ previous_scores['motivation'].created_at[:10] }}
+      </div>
+      {% endif %}
+      <a href="/self-check/motivation" class="btn btn-secondary" style="width: 100%;">Check Daily Motivation →</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

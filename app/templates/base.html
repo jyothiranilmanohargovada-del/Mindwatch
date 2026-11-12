@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf" content="{{ csrf_token() }}">
+  <title>{% block title %}MindWatch 2.0 — Student Mental Wellbeing Platform{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <a href="/" class="sidebar-brand">
+        <div class="brand-icon">M</div>
+        <div>
+          <span class="brand-title">MindWatch</span>
+          <span class="brand-version">2.0</span>
+        </div>
+      </a>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Screening</div>
+        <a href="/" class="nav-item {% if request.path == '/' or request.path == '/analyze' %}active{% endif %}">
+          <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Text Analysis
+        </a>
+        <a href="/self-check" class="nav-item {% if request.path.startswith('/self-check') or request.path == '/phq9' %}active{% endif %}">
+          <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+          Self-Check Hub
+        </a>
+        <a href="/chat" class="nav-item {% if request.path == '/chat' %}active{% endif %}">
+          <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          Support Chat
+        </a>
+        <a href="/timeline" class="nav-item {% if request.path == '/timeline' %}active{% endif %}">
+          <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+          </svg>
+          Timeline Analytics
+        </a>
+
+        <div class="nav-section-title">Insights & Resources</div>
+        <a href="/dashboard" class="nav-item {% if request.path == '/dashboard' %}active{% endif %}">
+          <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+          </svg>
+          Dashboard
+        </a>
+        <a href="/resources" class="nav-item {% if request.path == '/resources' %}active{% endif %}">
+          <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"/>
+          </svg>
+          Helplines & Resources
+        </a>
+        <a href="/about" class="nav-item {% if request.path == '/about' %}active{% endif %}">
+          <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          About & Ethics
+        </a>
+
+        {% if user %}
+        <div class="nav-section-title">My Account</div>
+        <a href="/history" class="nav-item {% if request.path == '/history' %}active{% endif %}">
+          <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          My History
+        </a>
+        <a href="/settings" class="nav-item {% if request.path == '/settings' %}active{% endif %}">
+          <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Settings
+        </a>
+        {% endif %}
+      </nav>
+
+      <div class="sidebar-footer">
+        {% if user %}
+        <div class="user-profile-badge">
+          <div class="user-avatar">{{ user.username[0]|upper }}</div>
+          <div class="user-info">
+            <div class="user-name">{{ user.username }}</div>
+            <div class="mut" style="font-size:11px;">Active Session</div>
+          </div>
+          <form method="post" action="/logout" style="display:inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="link mut" style="font-size:12px;" title="Log out">Sign out</button>
+          </form>
+        </div>
+        {% else %}
+        <div style="display:flex; gap:8px;">
+          <a href="/login" class="btn btn-secondary btn-sm" style="flex:1;">Log in</a>
+          <a href="/register" class="btn btn-primary btn-sm" style="flex:1;">Register</a>
+        </div>
+        {% endif %}
+      </div>
+    </aside>
+
+    <!-- Main Content Shell -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation">☰</button>
+          <span style="font-weight:600; font-size:15px; color:var(--text-muted);">
+            {% block breadcrumbs %}Student Wellbeing Platform{% endblock %}
+          </span>
+        </div>
+        <div class="topbar-right">
+          <a href="/resources" class="crisis-callout-pill" title="Need immediate help? Click for crisis support">
+            <span style="font-size:14px;">🆘</span>
+            <span>Crisis Helpline: 14416 / 112</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="content-container">
+        {% block content %}{% endblock %}
+      </main>
+
+      <footer class="disclaimer-footer">
+        <div>
+          <b>Non-Clinical Screening Aid:</b> MindWatch 2.0 does not provide clinical diagnoses, medical advice, or crisis intervention.
+        </div>
+        <div>
+          In immediate danger in India? Call <b>Tele-MANAS (14416)</b> or <b>112</b> &middot; <a href="/resources">Find More Helplines</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Mobile navigation toggle
+    const mobileBtn = document.getElementById("mobileMenuBtn");
+    const sidebar = document.getElementById("sidebar");
+    if (mobileBtn && sidebar) {
+      mobileBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+      });
+    }
+  </script>
+</body>
+</html>

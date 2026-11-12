@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Log In — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}Account Authentication / Log In{% endblock %}
+
+{% block content %}
+<div style="max-width: 440px; margin: 30px auto;">
+  <div class="card">
+    <div style="text-align: center; margin-bottom: 22px;">
+      <div class="brand-icon" style="margin: 0 auto 12px; width: 44px; height: 44px; font-size: 22px;">M</div>
+      <h1 style="font-size: 22px; font-weight: 800; letter-spacing: -0.3px;">Log In to MindWatch</h1>
+      <p class="mut" style="font-size: 13px; margin-top: 4px;">
+        Access your private wellbeing timeline and saved assessment records.
+      </p>
+    </div>
+
+    {% if error %}
+    <div style="padding: 10px 14px; background: var(--danger-subtle); border: 1px solid var(--danger-border); border-radius: var(--radius-md); margin-bottom: 18px;">
+      <p class="err" style="margin: 0; font-weight: 600;">{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <form method="post" action="/login">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username" placeholder="Your username" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Your password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 6px;">
+        Log In
+      </button>
+    </form>
+
+    <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center;">
+      <p class="mut" style="font-size: 13px; margin: 0;">
+        Don't have an account yet? <a href="/register" style="color:var(--primary); font-weight:600;">Register free</a>.
+      </p>
+      <p class="mut" style="font-size: 12px; margin-top: 6px;">
+        Accounts are optional — screening and support chat can be used completely anonymously.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

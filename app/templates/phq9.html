@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block content %}
+<div class="card"><h2>PHQ-9 self-check</h2>
+<p class="mut">Over the <b>last 2 weeks</b>, how often have you been bothered by the following? This is a screening questionnaire, not a diagnosis.</p>
+{% if error %}<p class="err">{{ error }}</p>{% endif %}
+<form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{% for item in items %}{% set i = loop.index0 %}<div class="q"><p><b>{{ loop.index }}.</b> {{ item }}</p>
+{% for v, label in options %}<label><input type="radio" name="q{{ i }}" value="{{ v }}" required> {{ label }}</label>{% endfor %}</div>{% endfor %}
+<br><button>See my score</button></form></div>
+{% endblock %}

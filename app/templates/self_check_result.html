@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Result: {{ res.category_title }} — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}<a href="/self-check" style="color:var(--text-muted); text-decoration:none;">Self-Check</a> / Result{% endblock %}
+
+{% block content %}
+<!-- Item 9 Safety Alert Banner if triggered -->
+{% if res.item9_flag %}
+<div class="card crisisbox" style="margin-bottom: 24px; border-width: 2px;">
+  <div style="display:flex; align-items:flex-start; gap:16px;">
+    <div style="font-size:32px;">🚨</div>
+    <div style="flex:1;">
+      <h2 style="color: var(--danger); font-size: 20px; font-weight: 800; margin-bottom: 6px;">
+        Immediate Safety & Helpline Support
+      </h2>
+      <p style="font-size: 14px; margin-bottom: 12px; line-height: 1.5;">
+        You indicated thoughts of being better off dead or hurting yourself.
+        <b>Please connect with someone who can support you today.</b> Professional, confidential help is available right now:
+      </p>
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div style="background: var(--surface); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--danger-border);">
+          <b>Tele-MANAS (24x7 Mental Health Helpline):</b>
+          <div style="font-size: 18px; font-weight: 800; color: var(--danger);">14416 (Toll-Free)</div>
+        </div>
+        <div style="background: var(--surface); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--danger-border);">
+          <b>National Emergency Services:</b>
+          <div style="font-size: 18px; font-weight: 800; color: var(--danger);">112</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card {% if res.item9_flag %}crisisbox{% endif %}">
+  <div class="card-header">
+    <div>
+      <span class="badge {% if res.is_validated %}badge-validated{% else %}badge-moderate{% endif %}" style="margin-bottom: 6px;">
+        {{ res.category_title }}
+      </span>
+      <h1 class="card-title" style="font-size: 22px;">
+        Assessment Score: {{ res.total }} / {{ res.max_score }} &mdash;
+        <span class="badge {% if res.band in ['Minimal', 'Healthy Habits', 'Manageable Pressure', 'Steady Momentum'] %}badge-low{% elif res.band in ['Mild', 'Moderate Strain', 'Moderate Inertia'] %}badge-moderate{% else %}badge-high{% endif %}">
+          {{ res.band }}
+        </span>
+      </h1>
+    </div>
+  </div>
+
+  <!-- Score Gauge Track -->
+  <div class="gauge-bar-track" style="height: 12px; margin: 10px 0 16px;">
+    <div class="gauge-bar-fill"
+         style="width: {{ (res.total / res.max_score * 100)|round }}%; background: {% if res.band in ['Minimal', 'Healthy Habits', 'Manageable Pressure', 'Steady Momentum'] %}#10b981{% elif res.band in ['Mild', 'Moderate Strain', 'Moderate Inertia'] %}#f59e0b{% else %}#ef4444{% endif %};">
+    </div>
+  </div>
+
+  <div style="background: var(--surface-2); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px;">
+    <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--text);">Clinical & Educational Interpretation:</h3>
+    <p style="font-size: 15px; margin: 0; color: var(--text); line-height: 1.55;">
+      {{ res.guidance }}
+    </p>
+  </div>
+
+  <!-- Personalized Actionable Suggestions -->
+  {% if res.recommendations %}
+  <div style="margin-bottom: 20px;">
+    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text);">
+      Recommended Action Steps & Coping Strategies:
+    </h3>
+    <ul style="padding-left: 20px;">
+      {% for rec in res.recommendations %}
+      <li style="margin-bottom: 8px; font-size: 14px; line-height: 1.5;">{{ rec }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- Emergency Helplines if High Distress -->
+  {% if resources %}
+  <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 10px;">Where to Get Help</h3>
+    <div class="grid-2">
+      {% for r in resources %}
+      <div style="background: var(--surface-2); padding: 12px 14px; border-radius: var(--radius-md);">
+        <b>{{ r.name }}</b>
+        <div style="font-size: 14px; color: var(--primary); font-weight: 600;">{{ r.contact }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div style="border-top: 1px solid var(--border); padding-top: 14px; margin-top: 18px;">
+    <p class="mut" style="font-size: 12px; margin: 0;">
+      {{ res.disclaimer }}
+    </p>
+  </div>
+</div>
+
+<!-- Navigation Actions -->
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+  <a href="/self-check" class="btn btn-secondary">&larr; Back to Self-Check Hub</a>
+  <div style="display:flex; gap:10px;">
+    <a href="/self-check/{{ res.category_id }}" class="btn btn-outline">Retake This Assessment</a>
+    <a href="/chat" class="btn btn-primary">Talk with Support Chat 💬</a>
+  </div>
+</div>
+{% endblock %}

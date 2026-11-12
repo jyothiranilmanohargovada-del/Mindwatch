@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Text Analysis — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}Text Language Analysis{% endblock %}
+
+{% block content %}
+<div class="card" style="background: linear-gradient(135deg, var(--surface), var(--primary-subtle)); border-color: var(--primary-border);">
+  <div style="max-width: 720px;">
+    <span class="badge badge-validated" style="margin-bottom: 10px;">MindWatch 2.0 AI Screening</span>
+    <h1 style="font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px;">
+      Social Media & Language Distress Analysis
+    </h1>
+    <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 0;">
+      Analyze written text (journal entries, social media posts, academic reflections) for emotional markers,
+      cognitive distortion signals, and student distress themes.
+    </p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h2 class="card-title">Analyze a Post or Thought</h2>
+      <p class="card-subtitle">
+        Enter English text to inspect emotional signals, vocabulary influences, and underlying themes.
+      </p>
+    </div>
+    <span class="mut" style="font-size: 12px;">🔒 Privacy-first: Raw text is not stored</span>
+  </div>
+
+  {% if error %}
+  <div style="padding: 12px 16px; background: var(--danger-subtle); border: 1px solid var(--danger-border); border-radius: var(--radius-md); margin-bottom: 16px;">
+    <p class="err" style="margin: 0; font-weight: 600;">{{ error }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Quick Sample Prompt Shortcuts -->
+  <div style="margin-bottom: 14px;">
+    <span class="mut" style="font-size: 12px; font-weight: 600; margin-right: 8px;">Try sample text:</span>
+    <div style="display: inline-flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="setSample('academic')">Academic Stress</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="setSample('sleep')">Late Night Fatigue</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="setSample('lonely')">Social Isolation</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="setSample('positive')">Balanced & Positive</button>
+    </div>
+  </div>
+
+  <form method="post" action="/analyze" id="analyzeForm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-group">
+      <label for="text">Your text (minimum 5 characters)</label>
+      <textarea id="text" name="text" placeholder="Type or paste text you wrote (e.g. 'I feel completely overwhelmed by finals and haven't slept in days...')" required></textarea>
+      <div style="display:flex; justify-content:space-between; margin-top: 6px;">
+        <span class="form-hint">English (Latin script) language analysis &middot; Up to 5,000 characters</span>
+        <span class="mut" id="charCount" style="font-size:12px;">0 / 5000</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button type="submit" class="btn btn-primary btn-lg">
+        <svg style="width:18px;height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        Analyze Language Signals
+      </button>
+      <span class="mut" style="font-size: 12px;">Results display detailed linguistic breakdown & actionable coping tips</span>
+    </div>
+  </form>
+</div>
+
+<!-- Feature Exploration Cards -->
+<div class="grid-3">
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-label">Validated Check-In</span>
+      <div class="stat-icon">📋</div>
+    </div>
+    <h3 style="font-size: 16px; font-weight: 700; margin: 4px 0;">Self-Check Hub</h3>
+    <p class="stat-desc">Complete validated PHQ-9 & GAD-7 screeners or check sleep, academic pressure, and daily motivation.</p>
+    <a href="/self-check" class="btn btn-outline btn-sm" style="margin-top: 10px; align-self: flex-start;">Start Self-Check →</a>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-label">Supportive Listener</span>
+      <div class="stat-icon">💬</div>
+    </div>
+    <h3 style="font-size: 16px; font-weight: 700; margin: 4px 0;">Intelligent Support Chat</h3>
+    <p class="stat-desc">Context-aware conversational companion with interactive box breathing, grounding, and study reset guides.</p>
+    <a href="/chat" class="btn btn-outline btn-sm" style="margin-top: 10px; align-self: flex-start;">Talk to Assistant →</a>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-label">Longitudinal Insights</span>
+      <div class="stat-icon">📈</div>
+    </div>
+    <h3 style="font-size: 16px; font-weight: 700; margin: 4px 0;">Timeline Analytics</h3>
+    <p class="stat-desc">Track changes in emotional signals across weeks and months, identify recurring themes, and export reports.</p>
+    <a href="/timeline" class="btn btn-outline btn-sm" style="margin-top: 10px; align-self: flex-start;">Explore Timeline →</a>
+  </div>
+</div>
+
+<script>
+  const txt = document.getElementById("text");
+  const counter = document.getElementById("charCount");
+  if (txt && counter) {
+    txt.addEventListener("input", () => {
+      counter.textContent = `${txt.value.length} / 5000`;
+    });
+  }
+
+  function setSample(type) {
+    const samples = {
+      academic: "I am completely overwhelmed by my finals and upcoming project submissions. My GPA feels like it's on the line and I'm terrified of letting my parents down.",
+      sleep: "Can't sleep again tonight. Been lying awake staring at the ceiling for hours with racing thoughts. Woke up totally exhausted and drained.",
+      lonely: "I feel so isolated on campus lately. Everyone else seems to have their friend groups figured out, but I'm completely alone and feel like nobody understands.",
+      positive: "Had a really productive day at the campus library, finished my lab report, and enjoyed a long walk with my friends. Feeling grateful and motivated."
+    };
+    if (txt && samples[type]) {
+      txt.value = samples[type];
+      txt.dispatchEvent(new Event("input"));
+      txt.focus();
+    }
+  }
+</script>
+{% endblock %}

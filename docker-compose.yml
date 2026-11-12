@@ -1,0 +1,11 @@
+services:
+  mindwatch:
+    build: .
+    ports: ["5000:5000"]
+    environment:
+      - SECRET_KEY=change-me-to-a-long-random-string
+      - MINDWATCH_STORE_TEXT=0
+    volumes:
+      - mindwatch_data:/app/data_store
+volumes:
+  mindwatch_data:

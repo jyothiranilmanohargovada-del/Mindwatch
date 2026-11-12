@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Intelligent Support Chat — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}Support Chat Assistant{% endblock %}
+
+{% block content %}
+<div class="grid-3" style="grid-template-columns: 2fr 1fr; align-items: start;">
+  <!-- Chat Main Messenger Column -->
+  <div>
+    <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 16px;">
+      <div class="chat-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="user-avatar" style="background:linear-gradient(135deg, var(--primary), #8b5cf6);">🤖</div>
+          <div>
+            <b style="font-size: 15px;">MindWatch Supportive Companion</b>
+            <div class="chat-status-indicator">
+              <span class="status-dot"></span>
+              <span>Context-Aware &middot; Non-Clinical Listener</span>
+            </div>
+          </div>
+        </div>
+        <span class="badge badge-low" style="font-size: 11px;">Active Session</span>
+      </div>
+
+      <!-- Quick Coping Exercises Drawer -->
+      <div class="chat-quick-actions">
+        <span class="mut" style="font-size: 11px; font-weight:600; align-self:center; margin-right:4px;">Coping:</span>
+        <button type="button" class="exercise-chip" onclick="triggerQuickExercise('breathing')">🧘 Box Breathing</button>
+        <button type="button" class="exercise-chip" onclick="triggerQuickExercise('grounding')">🌿 5-4-3-2-1 Grounding</button>
+        <button type="button" class="exercise-chip" onclick="triggerQuickExercise('exam stress help')">📚 Exam Reframe</button>
+        <button type="button" class="exercise-chip" onclick="triggerQuickExercise('sleep advice')">🌙 Sleep Routine</button>
+        <button type="button" class="exercise-chip" onclick="triggerQuickExercise('motivation rule')">⚡ 2-Minute Rule</button>
+      </div>
+
+      <!-- Chat Log Stream -->
+      <div id="log" class="chat-logs" aria-live="polite"></div>
+
+      <!-- Input Form -->
+      <form id="chatform" class="chat-form">
+        <input type="text" id="msg" placeholder="Share what's on your mind (e.g. feeling anxious about exams, lonely, tired...)" autocomplete="off" maxlength="1000" required>
+        <button type="submit" class="btn btn-primary">
+          <span>Send</span>
+          <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    <p class="mut" style="font-size: 12px; margin: 0 4px;">
+      🔒 <b>Privacy Notice:</b> Support chat is private to your current session. The assistant offers evidence-based coping exercises and emotional reflection, but is not a licensed clinician or crisis intervention service.
+    </p>
+  </div>
+
+  <!-- Sidebar: Crisis Helplines & Exercises Guide -->
+  <div>
+    <div class="card" style="border-left: 4px solid var(--danger);">
+      <h3 style="font-size: 15px; font-weight: 700; color: var(--danger); margin-bottom: 8px;">
+        Emergency & Crisis Support
+      </h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+        If you or someone you know is in immediate distress or danger, professional help is available 24/7:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom: 12px;">
+        <div style="background: var(--surface-2); padding: 8px 12px; border-radius: var(--radius-md);">
+          <b style="font-size: 12px;">Tele-MANAS (Govt of India):</b>
+          <div style="font-size: 14px; font-weight: 700; color: var(--primary);">14416 (Toll-Free, 24x7)</div>
+        </div>
+
+        <div style="background: var(--surface-2); padding: 8px 12px; border-radius: var(--radius-md);">
+          <b>Emergency Services:</b>
+          <div style="font-size: 14px; font-weight: 700; color: var(--danger);">112</div>
+        </div>
+
+        <div style="background: var(--surface-2); padding: 8px 12px; border-radius: var(--radius-md);">
+          <b>KIRAN National Helpline:</b>
+          <div style="font-size: 14px; font-weight: 700; color: var(--primary);">1800-599-0019</div>
+        </div>
+      </div>
+
+      <a href="/resources" class="btn btn-outline btn-sm" style="width: 100%;">View All Helplines Directory →</a>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">What You Can Talk About</h3>
+      <ul style="padding-left: 18px; font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+        <li>Academic overload, deadlines & exam anxiety</li>
+        <li>Feelings of loneliness, isolation, or homesickness</li>
+        <li>Sleep struggles and racing thoughts at night</li>
+        <li>Procrastination, brain fog, and low motivation</li>
+        <li>Relationship conflicts and social comparison</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+{% endblock %}

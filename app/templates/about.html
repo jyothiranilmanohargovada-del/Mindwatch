@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}About, Ethics & Scientific Foundations — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}About & Ethical Principles{% endblock %}
+
+{% block content %}
+<div class="card" style="background: linear-gradient(135deg, var(--surface), var(--primary-subtle)); border-color: var(--primary-border);">
+  <span class="badge badge-validated" style="margin-bottom: 8px;">Ethical AI & Privacy First</span>
+  <h1 style="font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px;">
+    About MindWatch 2.0 & Ethical Architecture
+  </h1>
+  <p style="color: var(--text-muted); font-size: 15px; margin: 0;">
+    MindWatch is an AI-assisted social media language screening and student mental wellbeing platform.
+    Designed to promote early self-reflection, provide evidence-based coping exercises, and lower friction to professional help.
+  </p>
+</div>
+
+<!-- Ethical Commitments -->
+<div class="card">
+  <h2 class="card-title">Core Ethical Commitments</h2>
+  <ul style="padding-left: 20px; font-size: 15px; line-height: 1.7; color: var(--text);">
+    <li><b>A screening aid, not a diagnostic tool:</b> Output can be wrong and does NOT constitute a clinical depression or anxiety diagnosis.</li>
+    <li><b>Raw text is not stored by default:</b> Only the risk result and linguistic aggregates are kept (and linked to you only if you log in).</li>
+    <li><b>Consent-driven usage:</b> Only analyse your own text, or text you have explicit consent to analyse.</li>
+    <li><b>Crisis override safety:</b> Explicit crisis language always triggers help-line information, regardless of the model score.</li>
+    <li><b>Language safety guard:</b> The model reads English only; other scripts are reported as "unsupported", never as "low risk".</li>
+    <li><b>Data sovereignty:</b> You can export or delete all your data at any time via your account dashboard.</li>
+  </ul>
+</div>
+
+<!-- Scientific Foundations Grid -->
+<div class="grid-2">
+  <div class="card">
+    <h3 class="card-title" style="margin-bottom: 10px;">Linguistic Biomarkers</h3>
+    <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+      Clinical NLP literature demonstrates that individuals experiencing emotional distress often exhibit:
+    </p>
+    <ul style="padding-left: 20px; font-size: 13px; color: var(--text); line-height: 1.6; margin-top: 8px;">
+      <li><b>Elevated First-Person Singular Pronouns:</b> Reflecting cognitive self-focus and social isolation (Rude et al., 2004).</li>
+      <li><b>Absolutist Vocabulary:</b> Words like 'always', 'never', 'completely' indicating all-or-nothing cognitive distortions (Al-Mosaiwi & Johnstone, 2018).</li>
+      <li><b>Affective Valence Imbalance:</b> Elevated negative affective markers compared to mitigating positive words.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title" style="margin-bottom: 10px;">Validated Instruments</h3>
+    <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+      MindWatch 2.0 incorporates public-domain, gold-standard psychological screening tools:
+    </p>
+    <ul style="padding-left: 20px; font-size: 13px; color: var(--text); line-height: 1.6; margin-top: 8px;">
+      <li><b>PHQ-9 (Patient Health Questionnaire-9):</b> Kroenke, Spitzer & Williams (2001). 9 validated items with standard 0–27 scoring.</li>
+      <li><b>GAD-7 (Generalized Anxiety Disorder-7):</b> Spitzer, Kroenke, Williams & Löwe (2006). 7 validated items with standard 0–21 scoring.</li>
+      <li><b>Non-Diagnostic Student Screeners:</b> Dedicated educational checks for sleep habits, academic workload pressure, and motivation.</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

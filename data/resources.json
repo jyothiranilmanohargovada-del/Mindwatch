@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Tele-MANAS (Govt. of India 24x7 Mental Health Helpline)",
+    "contact": "14416 (toll-free, 24x7)",
+    "description": "Comprehensive, confidential 24/7 tele-mental health support across India."
+  },
+  {
+    "name": "Emergency Services (India)",
+    "contact": "112",
+    "description": "National emergency number for immediate life-safety or medical response."
+  },
+  {
+    "name": "KIRAN National Mental Health Helpline",
+    "contact": "1800-599-0019 (24x7 toll-free)",
+    "description": "Operated by the Ministry of Social Justice & Empowerment in 13 languages."
+  },
+  {
+    "name": "Vandrevala Foundation Helpline",
+    "contact": "+91 9999 666 555 (24x7 via call or WhatsApp)",
+    "description": "Free mental health counseling and crisis intervention by trained professionals."
+  },
+  {
+    "name": "iCALL Psychosocial Helpline (TISS)",
+    "contact": "+91 9152 987 821 (Mon–Sat, 10 AM – 8 PM)",
+    "description": "Free counseling for students, youth, and distress management."
+  },
+  {
+    "name": "Find a Helpline in Other Countries",
+    "contact": "https://findahelpline.com",
+    "description": "Global directory of free, confidential crisis hotlines and text services worldwide."
+  }
+]

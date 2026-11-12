@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Settings & Privacy — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}Account Settings & Privacy{% endblock %}
+
+{% block content %}
+<div class="card" style="background: linear-gradient(135deg, var(--surface), var(--primary-subtle)); border-color: var(--primary-border);">
+  <h1 style="font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">
+    Settings & Privacy Controls
+  </h1>
+  <p style="color: var(--text-muted); font-size: 14px; margin: 0;">
+    Manage your account preferences, password credentials, and data privacy options.
+  </p>
+</div>
+
+{% if success %}
+<div style="padding: 12px 16px; background: var(--success-subtle); border: 1px solid var(--success-border); border-radius: var(--radius-md); margin-bottom: 16px;">
+  <p style="color: var(--success); margin: 0; font-weight: 600;">{{ success }}</p>
+</div>
+{% endif %}
+
+{% if error %}
+<div style="padding: 12px 16px; background: var(--danger-subtle); border: 1px solid var(--danger-border); border-radius: var(--radius-md); margin-bottom: 16px;">
+  <p class="err" style="margin: 0; font-weight: 600;">{{ error }}</p>
+</div>
+{% endif %}
+
+<div class="grid-2">
+  <!-- Profile & Preferences Card -->
+  <div class="card">
+    <h2 class="card-title" style="font-size: 17px; margin-bottom: 14px;">Profile & Preferences</h2>
+
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom: 18px;">
+      <div class="user-avatar" style="width:48px; height:48px; font-size:20px;">{{ user.username[0]|upper }}</div>
+      <div>
+        <b style="font-size: 16px;">{{ user.username }}</b>
+        <div class="mut" style="font-size: 12px;">Joined: {{ user.created_at[:10] }}</div>
+      </div>
+    </div>
+
+    <form method="post" action="/settings/preferences">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label for="user_type">Role / Life Context</label>
+        <select id="user_type" name="user_type">
+          <option value="undergraduate" {% if user.preferences.get('user_type') == 'undergraduate' %}selected{% endif %}>Undergraduate Student</option>
+          <option value="postgraduate" {% if user.preferences.get('user_type') == 'postgraduate' %}selected{% endif %}>Postgraduate / PhD Researcher</option>
+          <option value="highschool" {% if user.preferences.get('user_type') == 'highschool' %}selected{% endif %}>High School Student</option>
+          <option value="general" {% if user.preferences.get('user_type') == 'general' %}selected{% endif %}>General Community Member</option>
+        </select>
+        <span class="form-hint">Used solely to tune coping suggestions (e.g. academic vs lifestyle).</span>
+      </div>
+
+      <div class="form-group">
+        <label for="theme">Visual Theme Preference</label>
+        <select id="theme" name="theme">
+          <option value="system" {% if user.preferences.get('theme') == 'system' %}selected{% endif %}>System Preference (Default)</option>
+          <option value="light" {% if user.preferences.get('theme') == 'light' %}selected{% endif %}>Light Mode</option>
+          <option value="dark" {% if user.preferences.get('theme') == 'dark' %}selected{% endif %}>Dark Mode</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-sm">Save Preferences</button>
+    </form>
+  </div>
+
+  <!-- Security: Change Password Card -->
+  <div class="card">
+    <h2 class="card-title" style="font-size: 17px; margin-bottom: 14px;">Change Password</h2>
+
+    <form method="post" action="/settings/password">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label for="current_password">Current Password</label>
+        <input type="password" id="current_password" name="current_password" required>
+      </div>
+
+      <div class="form-group">
+        <label for="new_password">New Password (minimum 8 characters)</label>
+        <input type="password" id="new_password" name="new_password" required minlength="8">
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">Confirm New Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required minlength="8">
+      </div>
+
+      <button type="submit" class="btn btn-secondary btn-sm">Update Password</button>
+    </form>
+  </div>
+</div>
+
+<!-- Privacy & Data Controls -->
+<div class="card" style="border-color: var(--danger-border);">
+  <h2 class="card-title" style="font-size: 17px; margin-bottom: 8px;">Privacy, Export & Account Deletion</h2>
+  <p class="mut" style="font-size: 13px; margin-bottom: 16px;">
+    MindWatch operates on a strict privacy-first foundation. Your analyses and screeners are visible only to you.
+  </p>
+
+  <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom: 20px;">
+    <a href="/account/export" class="btn btn-secondary btn-sm">
+      📥 Export Complete Data Archive (JSON)
+    </a>
+  </div>
+
+  <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+    <h3 style="font-size: 14px; font-weight: 700; color: var(--danger); margin-bottom: 6px;">
+      Danger Zone: Permanent Account Deletion
+    </h3>
+    <p class="mut" style="font-size: 12px; margin-bottom: 12px;">
+      Permanently removes your account, credentials, and every recorded analysis and self-check score.
+    </p>
+
+    <form method="post" action="/account/delete" onsubmit="return confirm('Are you sure you want to permanently delete your account and all data? This cannot be undone.');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div style="display:flex; gap:10px; max-width: 450px;">
+        <input type="password" name="password" placeholder="Confirm your password" required>
+        <button type="submit" class="danger btn-sm" style="white-space:nowrap;">Delete Account</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

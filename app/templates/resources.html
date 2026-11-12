@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Emergency Helplines & Mental Health Resources — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}Emergency Helplines & Support Directory{% endblock %}
+
+{% block content %}
+<div class="card" style="background: linear-gradient(135deg, var(--surface), var(--danger-subtle)); border-color: var(--danger-border);">
+  <span class="badge badge-crisis" style="margin-bottom: 8px;">24/7 Crisis Support Directory</span>
+  <h1 style="font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; color: var(--danger);">
+    Immediate Human & Professional Support
+  </h1>
+  <p style="color: var(--text); font-size: 15px; margin: 0; line-height: 1.5;">
+    If you are feeling overwhelmed, hopeless, or having thoughts of self-harm, please reach out to one of the trained,
+    confidential listeners below. You do not have to handle this in isolation.
+  </p>
+</div>
+
+<!-- Primary Crisis Lines Grid -->
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">National Crisis & Emergency Helplines (India)</h2>
+    <span class="badge badge-high">Free & Confidential</span>
+  </div>
+
+  <div class="grid-2">
+    {% for r in resources %}
+    <div style="background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 6px;">
+        <b style="font-size: 15px; color: var(--text);">{{ r.name }}</b>
+      </div>
+      <div style="font-size: 17px; font-weight: 800; color: var(--primary); margin-bottom: 6px;">
+        {{ r.contact }}
+      </div>
+      {% if r.description %}
+      <p class="mut" style="font-size: 13px; margin: 0;">{{ r.description }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Student Mental Health & Evidence-Based Coping Strategies -->
+<div class="grid-2">
+  <div class="card">
+    <h3 class="card-title" style="margin-bottom: 10px;">Immediate Calming Exercises</h3>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="background: var(--surface-2); padding: 12px 14px; border-radius: var(--radius-md);">
+        <b>Box Breathing Technique (4-4-4-4):</b>
+        <p class="mut" style="font-size: 13px; margin-top: 4px;">
+          Inhale for 4s &rarr; Hold for 4s &rarr; Exhale for 4s &rarr; Hold for 4s. Calms the sympathetic fight-or-flight nervous response.
+        </p>
+      </div>
+
+      <div style="background: var(--surface-2); padding: 12px 14px; border-radius: var(--radius-md);">
+        <b>5-4-3-2-1 Sensory Grounding:</b>
+        <p class="mut" style="font-size: 13px; margin-top: 4px;">
+          Identify 5 things you can see, 4 feel, 3 hear, 2 smell, 1 taste. Anchors racing thoughts back to physical reality.
+        </p>
+      </div>
+
+      <div style="background: var(--surface-2); padding: 12px 14px; border-radius: var(--radius-md);">
+        <b>The 20-Minute Sleep Rule:</b>
+        <p class="mut" style="font-size: 13px; margin-top: 4px;">
+          If unable to fall asleep after 20 minutes, leave bed and sit in dim light reading something peaceful until sleepy.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title" style="margin-bottom: 10px;">When to Seek In-Person Care</h3>
+    <ul style="padding-left: 20px; font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+      <li>Low mood, emptiness, or severe sorrow lasting continuously for more than 2 weeks</li>
+      <li>Inability to sleep or eat normally that impairs class attendance or work</li>
+      <li>Intense panic attacks or overwhelming dread that doesn't subside</li>
+      <li>Persistent thoughts of hurting yourself, suicide, or wishing you were dead</li>
+      <li>Severe social withdrawal where you stop communicating with all friends and family</li>
+    </ul>
+
+    <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);">
+      <a href="/chat" class="btn btn-primary btn-sm">Talk Through Coping Steps in Chat 💬</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

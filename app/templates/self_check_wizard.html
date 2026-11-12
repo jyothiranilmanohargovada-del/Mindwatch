@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}{{ cat.title }} — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}<a href="/self-check" style="color:var(--text-muted); text-decoration:none;">Self-Check</a> / {{ cat.short_title }}{% endblock %}
+
+{% block content %}
+<div class="wizard-card">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <span class="badge {% if cat.is_validated %}badge-validated{% else %}badge-moderate{% endif %}">
+      {{ cat.badge }}
+    </span>
+    <h1 style="font-size: 24px; font-weight: 800; margin-top: 8px; margin-bottom: 4px;">{{ cat.title }}</h1>
+    <p class="mut" style="font-size: 14px;">{{ cat.timeframe }}, how often have you been bothered by the following?</p>
+  </div>
+
+  <div class="card">
+    <!-- Progress Indicator -->
+    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; color: var(--text-muted);">
+      <span id="progressText">Question 1 of {{ cat['items']|length }}</span>
+      <span>Step-by-Step Assessment</span>
+    </div>
+    <div class="wizard-progress-bar">
+      <div class="wizard-progress-fill" id="progressBar" style="width: {{ (1 / cat['items']|length * 100)|round }}%;"></div>
+    </div>
+
+    {% if error %}
+    <div style="padding: 10px 14px; background: var(--danger-subtle); border: 1px solid var(--danger-border); border-radius: var(--radius-md); margin-bottom: 16px;">
+      <p class="err" style="margin:0;">{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <form method="post" id="wizardForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      {% for item in cat['items'] %}
+      {% set q_idx = loop.index0 %}
+      <div class="wizard-step {% if loop.first %}active{% endif %}" data-step="{{ q_idx }}">
+        <div class="question-text">
+          <span style="color: var(--primary); margin-right: 6px;">Q{{ loop.index }}.</span> {{ item }}
+        </div>
+
+        <div class="option-cards">
+          {% for val, label in cat['options'] %}
+          <label class="option-card" for="q_{{ q_idx }}_{{ val }}">
+
+            <input type="radio" id="q_{{ q_idx }}_{{ val }}" name="q{{ q_idx }}" value="{{ val }}" required>
+            <div style="flex:1;">
+              <span class="option-label">{{ label }}</span>
+              <div class="mut" style="font-size: 11px;">
+                {% if val == 0 %}Not experienced over the past 2 weeks
+                {% elif val == 1 %}Experienced on several days (1–6 days)
+                {% elif val == 2 %}Experienced on more than half the days (7–11 days)
+                {% elif val == 3 %}Experienced nearly every single day (12–14 days)
+                {% endif %}
+              </div>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+
+      <!-- Navigation & Action Buttons -->
+      <div class="wizard-actions">
+        <div>
+          <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">
+            &larr; Previous
+          </button>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          {% if not cat.is_validated %}
+          <button type="button" class="btn btn-outline btn-sm" id="skipBtn" title="Default this item to 0 and proceed">
+            Skip this question
+          </button>
+          {% endif %}
+          <button type="button" class="btn btn-primary" id="nextBtn">
+            Next Question &rarr;
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div style="text-align: center; margin-top: 14px;">
+    <p class="mut" style="font-size: 12px; margin: 0;">
+      {{ cat.disclaimer }}
+    </p>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='wizard.js') }}"></script>
+{% endblock %}

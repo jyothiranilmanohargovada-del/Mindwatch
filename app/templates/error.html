@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Notice &middot; MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}System Notice{% endblock %}
+
+{% block content %}
+<div style="max-width: 520px; margin: 40px auto;">
+  <div class="card" style="text-align: center; padding: 36px 28px;">
+    <div style="font-size: 40px; margin-bottom: 12px;">
+      {% if code == 200 %}✅{% elif code == 404 %}🔍{% elif code == 401 %}🔒{% elif code == 413 %}📁{% else %}⚠️{% endif %}
+    </div>
+    <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">
+      {{ code if code != 200 else 'Done' }}
+    </h2>
+    <p style="font-size: 15px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5;">
+      {{ msg }}
+    </p>
+    <a href="/" class="btn btn-primary">Return to Home</a>
+  </div>
+</div>
+{% endblock %}

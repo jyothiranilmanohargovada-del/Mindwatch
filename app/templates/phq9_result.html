@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block content %}
+<div class="card {% if res.item9_flag %}crisisbox{% endif %}"><h2>PHQ-9 score: {{ res.total }} / 27 &mdash; {{ res.band }}</h2><p>{{ res.guidance }}</p>
+{% if res.item9_flag %}<p><b>You indicated thoughts of being better off dead or of hurting yourself. Please talk to someone today - the contacts below can help right now.</b></p>{% endif %}
+{% if resources %}<h3>Where to get help</h3><ul>{% for r in resources %}<li><b>{{ r.name }}</b>: {{ r.contact }}</li>{% endfor %}</ul>{% endif %}
+<p class="mut">{{ disclaimer }} The PHQ-9 is a screening tool; only a clinician can diagnose depression.</p></div>
+<a href="/phq9">Retake</a>
+{% endblock %}

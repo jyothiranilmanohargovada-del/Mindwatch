@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Timeline Analytics — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}Longitudinal Timeline Analytics{% endblock %}
+
+{% block content %}
+<div class="card" style="background: linear-gradient(135deg, var(--surface), var(--primary-subtle)); border-color: var(--primary-border);">
+  <span class="badge badge-validated" style="margin-bottom: 8px;">Longitudinal Modeling</span>
+  <h1 style="font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px;">
+    Longitudinal Emotional Signal Timeline
+  </h1>
+  <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 0;">
+    Mental health is characterized by temporal persistence rather than isolated moments.
+    Track how emotional language markers evolve over weeks and months, identify recurring themes, and observe trends.
+  </p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h2 class="card-title">Upload or Paste Timeline Entries</h2>
+      <p class="card-subtitle">
+        Paste dated entries as <code>YYYY-MM-DD | text</code>, or upload a <code>.txt</code>, <code>.csv</code> (columns: date, text), or <code>.json</code> file.
+      </p>
+    </div>
+    {% if user %}
+    <form method="post" action="/timeline/load-saved" style="display:inline;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-secondary btn-sm">Load My Saved Posts</button>
+    </form>
+    {% endif %}
+  </div>
+
+  <form method="post" enctype="multipart/form-data" id="timelineForm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="grid-2" style="margin-bottom: 14px;">
+      <div>
+        <label for="start_date">Start Date Filter (Optional)</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date or '' }}">
+      </div>
+      <div>
+        <label for="end_date">End Date Filter (Optional)</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date or '' }}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="posts">Posts Text (one entry per line: <code>YYYY-MM-DD | text</code>)</label>
+      <textarea id="posts" name="posts" style="min-height: 160px;" placeholder="2026-10-01 | Started new semester, feeling nervous but optimistic&#10;2026-10-15 | Coursework is starting to pile up, trouble sleeping&#10;2026-10-25 | Exhausted, can't focus on finals and feel so overwhelmed">{{ raw or '' }}</textarea>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label for="file" class="btn btn-secondary btn-sm" style="margin: 0; cursor: pointer;">
+          📁 Choose File (1 MB max)
+        </label>
+        <input id="file" type="file" name="file" accept=".txt,.csv,.json" style="display: none;" onchange="document.getElementById('file-chosen').textContent = this.files[0] ? this.files[0].name : '';">
+        <span id="file-chosen" class="mut" style="font-size: 13px;">No file chosen</span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg">
+        <svg style="width:18px;height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        Analyze Timeline & Trends
+      </button>
+    </div>
+  </form>
+</div>
+
+{% if out %}
+<!-- Timeline Analytics Results Section -->
+<div class="card">
+  <div class="card-header">
+    <div>
+      <span class="mut" style="font-size: 12px; font-weight: 700; text-transform: uppercase;">
+        Longitudinal Trajectory
+      </span>
+      <h3 style="font-size: 20px; font-weight: 800; margin-top: 2px;">
+        Trend: <span class="badge {% if out.trend == 'improving' %}badge-low{% elif out.trend == 'worsening' %}badge-high{% else %}badge-moderate{% endif %}">{{ out.trend }}</span>
+        <span class="mut" style="font-size: 14px; font-weight: 500;">(slope {{ out.slope }}/period)</span>
+      </h3>
+    </div>
+
+    <!-- Export Buttons -->
+    <div style="display: flex; gap: 8px;">
+      <a href="/timeline/export?format=csv" class="btn btn-secondary btn-sm">Export CSV</a>
+      <a href="/timeline/export?format=json" class="btn btn-secondary btn-sm">Export JSON</a>
+    </div>
+  </div>
+
+  {% if out.crisis_posts %}
+  <div class="crisisbox" style="padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 16px;">
+    <p class="err" style="margin: 0; font-weight: 700;">
+      🚨 {{ out.crisis_posts }} post(s) contain crisis language. Please reach out for immediate support (India: Tele-MANAS 14416 / Emergency 112).
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- Chart.js Interactive Canvas -->
+  <div class="chart-wrapper" style="margin-bottom: 18px;">
+    <canvas id="timelineChart"></canvas>
+  </div>
+
+  <!-- Fallback Sparkline (Preserved for compatibility) -->
+  <div style="display: none;">
+    {{ chart }}
+  </div>
+
+  <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-bottom: 18px;">
+    <span>Dashed line: Moderate Distress Threshold (~0.40)</span>
+    <span>Total supported entries analyzed: {{ out.total_supported }} {% if out.skipped %}({{ out.skipped }} skipped non-English/empty){% endif %}</span>
+  </div>
+
+  <!-- Period Comparison Insight -->
+  {% if out.comparison %}
+  <div style="background: var(--surface-2); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 20px; border-left: 4px solid var(--primary);">
+    <b style="font-size: 14px; display:block; margin-bottom: 4px;">Time-Period Comparison:</b>
+    <p style="font-size: 13px; margin: 0; color: var(--text);">
+      Earlier period average distress score was <b>{{ out.comparison.earlier_period_mean }}</b>, compared to <b>{{ out.comparison.recent_period_mean }}</b> in the more recent period.
+      Overall shift reflects: <i>{{ out.comparison.summary }}</i>.
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- Secondary Charts Grid: Themes & Signal Frequencies -->
+  <div class="grid-2">
+    <div>
+      <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">Recurring Emotional Themes</h4>
+      <div style="height: 220px; position: relative;">
+        <canvas id="themesChart"></canvas>
+      </div>
+    </div>
+    <div>
+      <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">Language Signal Distribution</h4>
+      <div style="height: 220px; position: relative;">
+        <canvas id="signalsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly Aggregates Data Table -->
+  <div style="margin-top: 24px;">
+    <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;">Weekly Breakdown Summary</h4>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Period (Week)</th>
+            <th>Mean Risk Score</th>
+            <th>Posts Analyzed</th>
+            <th>Relative Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for w in out.weeks %}
+          <tr>
+            <td><b>{{ w.week }}</b></td>
+            <td>{{ w.mean_risk }}</td>
+            <td>{{ w.posts }}</td>
+            <td>
+              <span class="badge {% if w.mean_risk >= 0.65 %}badge-high{% elif w.mean_risk >= 0.40 %}badge-moderate{% else %}badge-low{% endif %}">
+                {% if w.mean_risk >= 0.65 %}Elevated{% elif w.mean_risk >= 0.40 %}Moderate{% else %}Low{% endif %}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.TIMELINE_DATA = {{ out.weeks|tojson }};
+  window.THEMES_DATA = {{ out.themes_frequency|tojson }};
+  window.SIGNALS_DATA = {{ out.signal_frequency|tojson }};
+</script>
+<script src="{{ url_for('static', filename='timeline.js') }}"></script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% block title %}My History & Records — MindWatch 2.0{% endblock %}
+{% block breadcrumbs %}Account History & Activity{% endblock %}
+
+{% block content %}
+<div class="card" style="background: linear-gradient(135deg, var(--surface), var(--primary-subtle)); border-color: var(--primary-border);">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+    <div>
+      <span class="badge badge-validated" style="margin-bottom: 6px;">Private Data Archive</span>
+      <h1 style="font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin: 0;">
+        Personal Activity History: {{ user.username }}
+      </h1>
+      <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
+        Review your past text language evaluations and multi-category self-check assessments.
+      </p>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <a href="/account/export" class="btn btn-secondary btn-sm">Download My Data (JSON)</a>
+      <a href="/settings" class="btn btn-outline btn-sm">Privacy & Settings</a>
+    </div>
+  </div>
+</div>
+
+<!-- Trajectory Card -->
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h2 class="card-title">Distress Score Trajectory</h2>
+      <p class="card-subtitle">Calculated sequentially from your oldest to newest text analyses</p>
+    </div>
+  </div>
+  {% if chart %}
+  <div style="margin: 12px 0;">
+    {{ chart }}
+  </div>
+  <p class="mut" style="font-size: 12px; margin: 0;">
+    Dashed amber line indicates the Moderate Distress threshold (~0.40). Points above indicate elevated distress markers.
+  </p>
+  {% else %}
+  <p class="mut" style="padding: 20px 0; text-align: center;">
+    Analyze a few posts while logged in to view your personalized risk curve.
+  </p>
+  {% endif %}
+</div>
+
+<!-- 1. Text Analyses Table -->
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Recorded Text Language Analyses</h3>
+      <p class="card-subtitle">Showing your last 50 analyses (Raw text is not stored for privacy)</p>
+    </div>
+    <a href="/" class="btn btn-primary btn-sm">+ New Analysis</a>
+  </div>
+
+  {% if rows %}
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Time (UTC)</th>
+          <th>Risk</th>
+          <th>Level</th>
+          <th>Themes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td>{{ r.created_at }}</td>
+          <td><b>{{ (r.probability * 100)|round(1) ~ '%' if r.probability is not none else '-' }}</b></td>
+          <td><span class="badge {{ r.level }}">{{ r.level }}</span></td>
+          <td>{{ r.themes or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="mut" style="text-align:center; padding: 24px 0;">No text analyses recorded yet.</p>
+  {% endif %}
+</div>
+
+<!-- 2. Multi-Category Self-Checks Table -->
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Self-Check Screener History</h3>
+      <p class="card-subtitle">Results from PHQ-9, GAD-7, and student wellbeing checks</p>
+    </div>
+    <a href="/self-check" class="btn btn-secondary btn-sm">+ Take a Self-Check</a>
+  </div>
+
+  {% if assessments %}
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Time (UTC)</th>
+          <th>Assessment Type</th>
+          <th>Score</th>
+          <th>Band</th>
+          <th>Flags</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in assessments %}
+        <tr>
+          <td>{{ a.created_at }}</td>
+          <td><b>{{ a.test_type }}</b></td>
+          <td>{{ a.total }} / {{ a.max_score }}</td>
+          <td><span class="badge badge-low">{{ a.band }}</span></td>
+          <td>
+            {% if a.item_flags and a.item_flags.get('item9_flag') %}
+            <span class="badge badge-crisis" style="font-size:11px;">Item 9 Flagged</span>
+            {% else %}
+            <span class="mut" style="font-size:12px;">Standard</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% elif phq %}
+  <!-- Fallback to legacy PHQ table if assessments empty -->
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Time (UTC)</th>
+          <th>Score</th>
+          <th>Band</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in phq %}
+        <tr>
+          <td>{{ p.created_at }}</td>
+          <td>{{ p.total }} / 27</td>
+          <td><span class="badge badge-low">{{ p.band }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="mut" style="text-align:center; padding: 24px 0;">No self-checks completed yet.</p>
+  {% endif %}
+</div>
+
+<!-- Data Privacy, Export & Deletion -->
+<div class="card" style="border-color: var(--danger-border);">
+  <h3 class="card-title" style="margin-bottom: 6px;">Your Data & Account Deletion</h3>
+  <p class="mut" style="font-size: 13px; margin-bottom: 14px;">
+    In accordance with privacy-by-design, you have full ownership of your records. You can download an export or permanently delete your account and all associated data at any time.
+  </p>
+
+  <div style="display:flex; gap:12px; margin-bottom: 16px;">
+    <a class="btn btn-secondary" href="/account/export">
+      📥 Download My Data (JSON)
+    </a>
+  </div>
+
+  <form method="post" action="/account/delete" onsubmit="return confirm('Are you sure you want to permanently delete your account and all associated records? This cannot be undone.');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-group" style="max-width: 400px;">
+      <label for="pw">Delete my account and all data - enter your password</label>
+      <input type="password" id="pw" name="password" placeholder="Confirm your password" required>
+    </div>
+    <button type="submit" class="danger">Delete account permanently</button>
+  </form>
+</div>
+{% endblock %}
